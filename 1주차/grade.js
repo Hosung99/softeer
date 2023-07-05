@@ -10,7 +10,7 @@ const currentStatus = gradeItem.currentStatus;
 const statusName = gradeItem.statusName;
 
 function initCurrentStatus(){
-    todos.map((value) => {
+    todos.forEach((value) => {
         for (const key in currentStatus){
             if (value.status == key)
                 currentStatus[key] += 1;
@@ -45,7 +45,7 @@ function showStatus(argv2){
 }
 
 function add(argv2, argv3){
-    if (todos.length === 100000000)
+    if (todos.length == 100000000)
         console.log("꽉 차서 add가 불가능합니다.");
     else{
         todos.push(makeTempObject(argv2,argv3));
@@ -70,11 +70,9 @@ function makeTempObject(argv2,argv3){
 function generateId(){
     let randomId = parseInt(Math.random()*100000000);
     let dupflag = 0;
-    do
-    {
+    do{
         for (let todo of todos){
-            if (todo.id === randomId)
-            {
+            if (todo.id === randomId){
                 randomId = parseInt(Math.random()*100000000);
                 dupflag = 1;
                 break;
@@ -90,7 +88,7 @@ function deleteItem(argv2){
     if (todos.length === 0)
         console.log("todo-list가 비어있습니다.");
     else{
-        doDelte(argv2, checkId(argv2));
+        doDelete(argv2, checkId(argv2));//
         printCurrentStatus();
     }
 }
@@ -104,7 +102,7 @@ function checkId(argv2){
         return 'Error';
 }
 
-function doDelte(argv2, checkId){
+function doDelete(argv2, checkId){
     if (checkId === 'Id')
         deleteUsingId(argv2);
     else if (checkId === 'Tag')
@@ -159,8 +157,7 @@ function update(argv2,argv3){
 function doUpdate(argv2,argv3){
     let existFlag = 1;
     todos.forEach((todo,index)=>{
-        if(argv2 === todo.id)
-        {
+        if(argv2 === todo.id){
             console.log(`${todo.name} ${argv3}으로 상태가 변경됐습니다`);
             currentStatus[todo.status]--;
             todos[index].status = argv3;
