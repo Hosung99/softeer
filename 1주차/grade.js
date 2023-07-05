@@ -1,13 +1,9 @@
-const gradeItem = require('./gradeItem');
+const {todos,currentStatus,statusName} = require('./gradeItem');
 const readline = require("readline");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
-
-const todos = gradeItem.todos;
-const currentStatus = gradeItem.currentStatus;
-const statusName = gradeItem.statusName;
 
 function initCurrentStatus(){
     todos.forEach((value) => {
