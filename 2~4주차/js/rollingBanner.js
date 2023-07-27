@@ -1,19 +1,17 @@
 import news_article from "../json/news_article.json" assert { type: "json" };
-
-let interval1;
-let interval2;
-const rollingTime = 5000;
+import { rollingTime } from "../utils/constants.js";
 
 function rollingBanner() {
   addInitRollingData(1);
   addInitRollingData(2);
   document.addEventListener("DOMContentLoaded", () => {
-    interval1 = setInterval(changeBanner, rollingTime, 1);
+    let interval1 = setInterval(changeBanner, rollingTime, 1);
+    addRollingHoverEvent(1, interval1);
     setTimeout(() => {
-      interval2 = setInterval(changeBanner, rollingTime, 2);
+      let interval2 = setInterval(changeBanner, rollingTime, 2);
+      addRollingHoverEvent(2, interval2);
     }, 1000);
   });
-  addRollingHoverEvent(interval1, interval2);
 }
 
 function addInitRollingData(bannerNumber) {
@@ -21,13 +19,12 @@ function addInitRollingData(bannerNumber) {
     `rolling-banner-0${bannerNumber}`
   );
   let startIndex, endIndex, secondIndex;
-  if (bannerNumber == 1) {
-    startIndex = 0;
-    endIndex = parseInt(news_article[0].article.length / 2);
-  } else {
-    startIndex = Math.ceil(news_article[0].article.length / 2);
-    endIndex = news_article[0].article.length;
-  }
+  startIndex =
+    bannerNumber === 1 ? 0 : Math.ceil(news_article.article.length / 2);
+  endIndex =
+    bannerNumber === 1
+      ? parseInt(news_article.article.length / 2)
+      : news_article.article.length;
   secondIndex = startIndex + 1;
   let newsHTML = `<div class="rollingWrap"><ul>`;
   for (; startIndex < endIndex; startIndex++) {
@@ -41,7 +38,7 @@ function addInitRollingData(bannerNumber) {
         ? "current"
         : "") +
       '">';
-    newsHTML += '<a href="#">' + news_article[0].article[startIndex] + "</a>";
+    newsHTML += '<a href="#">' + news_article.article[startIndex] + "</a>";
   }
   newsHTML += "</ul></div>";
   rollingBanner.innerHTML = newsHTML;
@@ -73,28 +70,36 @@ function changeNextBanner(bannerNumber) {
   );
   if (nextBanner.nextElementSibling == null)
     document
-      .querySelector(`#rolling-banner-0${bannerNumber} .rollingWrap ul li:first-child`)
+      .querySelector(
+        `#rolling-banner-0${bannerNumber} .rollingWrap ul li:first-child`
+      )
       .classList.add("next");
   else nextBanner.nextElementSibling.classList.add("next");
   nextBanner.classList.remove("next");
   nextBanner.classList.add("current");
 }
 
-function addRollingHoverEvent() {
-  const bannerHover01 = document.getElementById("rolling-banner-01");
-  const bannerHover02 = document.getElementById("rolling-banner-02");
-  bannerHover01.addEventListener("mouseover", () => {
-    clearInterval(interval1);
-  });
-  bannerHover01.addEventListener("mouseleave", () => {
-    interval1 = setInterval(changeBanner, rollingTime, 1);
-  });
-  bannerHover02.addEventListener("mouseover", () => {
-    clearInterval(interval2);
-  });
-  bannerHover02.addEventListener("mouseleave", () => {
-    interval2 = setInterval(changeBanner, rollingTime, 2);
-  });
+function addRollingHoverEvent(bannerNumber, interval) {
+  const bannerHover = {};
+  bannerHover[`bannerHover0${bannerNumber}`] = document.getElementById(
+    `rolling-banner-0${bannerNumber}`
+  );
+  bannerHover[`bannerHover0${bannerNumber}`].addEventListener(
+    "mouseover",
+    function () {
+      clearInterval(interval);
+    }
+  );
+  bannerHover[`bannerHover0${bannerNumber}`].addEventListener(
+    "mouseleave",
+    function () {
+      window[`interval${bannerNumber}`] = setInterval(
+        changeBanner,
+        rollingTime,
+        bannerNumber
+      );
+    }
+  );
 }
 
 export { rollingBanner };
